@@ -1,0 +1,23 @@
+{
+  "name": "x-rate",
+  "version": "1.0.0",
+  "description": "Adhere to x-rate-limit headers",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webjay/x-rate.git"
+  },
+  "keywords": [
+    "x-rate-limit",
+    "request"
+  ],
+  "author": "Jacob Friis Saxberg",
+  "license": "GNU",
+  "bugs": {
+    "url": "https://github.com/webjay/x-rate/issues"
+  },
+  "homepage": "https://github.com/webjay/x-rate#readme"
+}
