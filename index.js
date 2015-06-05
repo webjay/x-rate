@@ -57,7 +57,7 @@ Xrate.prototype.request = function () {
 };
 
 Xrate.prototype.next = function (callback, err, res, body) {
-  this.setLimits(res.headers['X-Rate-Limit-Limit'], res.headers['X-Rate-Limit-Remaining'], res.headers['X-Rate-Limit-Reset']);
+  this.setLimits(res.headers);
   callback(err, res, body);
 };
 
@@ -65,10 +65,21 @@ Xrate.prototype.intOrNull = function (val) {
   return (val !== undefined) ? parseInt(val, 10) : null;
 };
 
-Xrate.prototype.setLimits = function (limit, remaining, reset) {
+Xrate.prototype.lowercaseKeys = function (obj) {
+  var lowercased = {};
+  var keys = Object.keys(obj);
+  var n = keys.length;
+  while (n--) {
+    lowercased[keys[n].toLowerCase()] = obj[keys[n]];
+  }
+  return lowercased;
+};
+
+Xrate.prototype.setLimits = function (headers) {
+  var headersLowercased = (headers) ? this.lowercaseKeys(headers) : {};
   this.limits = {
-    limit: this.intOrNull(limit),
-    remaining: this.intOrNull(remaining),
-    reset: this.intOrNull(reset),
+    limit: this.intOrNull(headersLowercased['x-rate-limit-limit']),
+    remaining: this.intOrNull(headersLowercased['x-rate-limit-remaining']),
+    reset: this.intOrNull(headersLowercased['x-rate-limit-reset']),
   };
 };
