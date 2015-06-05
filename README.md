@@ -1,2 +1,3 @@
 # x-rate
-Adhere to x-rate-limit headers
+
+Use [request](https://www.npmjs.com/package/request) and adhere to x-rate-limit headers.

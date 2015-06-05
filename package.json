@@ -1,10 +1,15 @@
 {
   "name": "x-rate",
   "version": "1.0.0",
-  "description": "Adhere to x-rate-limit headers",
+  "description": "Use request and adhere to x-rate-limit headers",
   "main": "index.js",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "mocha": "2.x.x"
+  },
   "scripts": {
-    "test": "mocha"
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -12,7 +17,12 @@
   },
   "keywords": [
     "x-rate-limit",
-    "request"
+    "X-Rate-Limit-Limit",
+    "X-Rate-Limit-Remaining",
+    "X-Rate-Limit-Reset",
+    "request",
+    "http",
+    "https"
   ],
   "author": "Jacob Friis Saxberg",
   "license": "GNU",
