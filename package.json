@@ -1,6 +1,6 @@
 {
   "name": "x-rate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Use request and adhere to x-rate-limit headers",
   "main": "index.js",
   "dependencies": {

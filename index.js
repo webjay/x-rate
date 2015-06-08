@@ -3,13 +3,14 @@
 module.exports = Xrate;
 
 function Xrate (fn, callback) {
-  if (typeof fn !== 'function' || typeof callback !== 'function') {
+  if (typeof fn !== 'function') {
     throw('Missing function');
   }
   this.fn = fn;
-  this.callback = callback;
+  this.callback = callback || function(){};
   this.setLimits();
   this.queue = [];
+  this.requesting = 0;
   this.queueChecker = setInterval(this.queueCheck.bind(this), 1000);
 }
 
@@ -18,7 +19,7 @@ Xrate.prototype.getMethod = function () {
 };
 
 Xrate.prototype.queueCheck = function () {
-  if (this.queue.length === 0) {
+  if (this.queue.length === 0 && this.requesting === 0) {
     clearInterval(this.queueChecker);
     clearTimeout(this.resetChecker);
     this.callback();
@@ -26,7 +27,7 @@ Xrate.prototype.queueCheck = function () {
   }
   this.createResetCheck();
   if (this.queue.length > 0 && this.limits.remaining > 0) {
-    for (var i = 0; i < this.limits.remaining; i++) {
+    for (var i = 0; i < this.limits.remaining && i < this.queue.length; i++) {
       this.request.apply(this, this.queue.shift());
     }
   }
@@ -34,7 +35,7 @@ Xrate.prototype.queueCheck = function () {
 
 Xrate.prototype.createResetCheck = function () {
   if (this.resetChecker === undefined && this.limits.reset > 0) {
-    this.resetChecker = setTimeout(this.resetRemaining.bind(this), this.limits.reset);
+    this.resetChecker = setTimeout(this.resetRemaining.bind(this), this.limits.reset * 1000);
   }
 };
 
@@ -42,6 +43,7 @@ Xrate.prototype.resetRemaining = function () {
   if (this.limits.remaining <= 0) {
     this.limits.remaining = 1;
   }
+  clearTimeout(this.resetChecker);
   delete this.resetChecker;
 };
 
@@ -50,15 +52,21 @@ Xrate.prototype.request = function () {
     this.queue.push(arguments);
     return;
   }
+  this.requesting++;
   var args = Array.prototype.slice.call(arguments, 0, -1);
   var callback = Array.prototype.slice.call(arguments, -1);
-  var next = this.next.bind(this, callback[0]);
+  var next = this.next.bind(this, callback[0], arguments);
   this.fn.apply(this.fn, args.concat(next));
 };
 
-Xrate.prototype.next = function (callback, err, res, body) {
-  this.setLimits(res.headers);
-  callback(err, res, body);
+Xrate.prototype.next = function (callback, args, err, response, body) {
+  this.setLimits(response.headers);
+  if (!err && response.statusCode < 200 || response.statusCode >= 300) {
+    err = new Error('Received a non 2xx status code');
+    err.statusCode = response.statusCode;
+  }
+  callback(err, response, body);
+  this.requesting--;
 };
 
 Xrate.prototype.intOrNull = function (val) {
