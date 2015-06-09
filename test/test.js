@@ -46,14 +46,14 @@ describe('x-rate request, use queue', function () {
     this.limits = {
       limit: 5,
       remaining: 5,
-      reset: 0
+      reset: 2
     };
     this.request = function (options, callback) {
       var response = {
         headers: {
           'X-Rate-Limit-Limit': self.limits.limit,
           'X-Rate-Limit-Remaining': (self.limits.remaining > 0) ? --self.limits.remaining : self.limits.remaining,
-          'X-Rate-Limit-Reset': ++self.limits.reset
+          'X-Rate-Limit-Reset': self.limits.reset
         }
       };
       var body = 'hello';
@@ -62,7 +62,7 @@ describe('x-rate request, use queue', function () {
   });
 
   it('requests 10', function (done) {
-    this.timeout(10000);
+    this.timeout(15000);
     var callback = function () {
       assert.equal(xRate.queue.length, 0);
       done();
