@@ -16,6 +16,7 @@
     "url": "git+https://github.com/webjay/x-rate.git"
   },
   "keywords": [
+    "x-ratelimit",
     "x-rate-limit",
     "X-Rate-Limit-Limit",
     "X-Rate-Limit-Remaining",

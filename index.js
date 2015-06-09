@@ -83,11 +83,19 @@ Xrate.prototype.lowercaseKeys = function (obj) {
   return lowercased;
 };
 
+Xrate.prototype.getKeyNormalized = function (key, obj) {
+  if (obj[key] === undefined) {
+    var keyAlternate = key.replace('rate-limit', 'ratelimit');
+    return obj[keyAlternate];
+  }
+  return obj[key];
+};
+
 Xrate.prototype.setLimits = function (headers) {
   var headersLowercased = (headers) ? this.lowercaseKeys(headers) : {};
   this.limits = {
-    limit: this.intOrNull(headersLowercased['x-rate-limit-limit']),
-    remaining: this.intOrNull(headersLowercased['x-rate-limit-remaining']),
-    reset: this.intOrNull(headersLowercased['x-rate-limit-reset']),
+    limit: this.intOrNull(this.getKeyNormalized('x-rate-limit-limit', headersLowercased)),
+    remaining: this.intOrNull(this.getKeyNormalized('x-rate-limit-remaining', headersLowercased)),
+    reset: this.intOrNull(this.getKeyNormalized('x-rate-limit-reset', headersLowercased)),
   };
 };

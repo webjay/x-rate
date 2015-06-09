@@ -75,3 +75,28 @@ describe('x-rate request, use queue', function () {
   });
 
 });
+
+describe('Normalize headers', function () {
+
+  it('should find alternate headers', function () {
+    var testData = {
+      headers: {
+        'X-Rate-Limit-Limit': 60,
+        'X-Rate-Limit-Remaining': 50,
+        'X-Rate-Limit-Reset': 40,
+        'X-RateLimit-Limit': 60,
+        'X-RateLimit-Remaining': 50,
+        'X-RateLimit-Reset': 40
+      }
+    };
+    var xRate = new Xrate(function(){});
+    var headersLowercased = xRate.lowercaseKeys(testData.headers);
+    assert.equal(xRate.getKeyNormalized('x-rate-limit-limit', headersLowercased), 60);
+    assert.equal(xRate.getKeyNormalized('x-ratelimit-limit', headersLowercased), 60);
+    assert.equal(xRate.getKeyNormalized('x-rate-limit-remaining', headersLowercased), 50);
+    assert.equal(xRate.getKeyNormalized('x-ratelimit-remaining', headersLowercased), 50);
+    assert.equal(xRate.getKeyNormalized('x-rate-limit-reset', headersLowercased), 40);
+    assert.equal(xRate.getKeyNormalized('x-ratelimit-reset', headersLowercased), 40);
+  });
+
+});
