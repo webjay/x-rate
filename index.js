@@ -62,7 +62,7 @@ Xrate.prototype.request = function () {
 Xrate.prototype.next = function (callback, args, err, response, body) {
   this.setLimits(response.headers);
   if (!err && response.statusCode < 200 || response.statusCode >= 300) {
-    err = new Error('Received a non 2xx status code');
+    err = new Error('Received a non 2xx status code: ' + response.statusCode);
     err.statusCode = response.statusCode;
   }
   callback(err, response, body);
